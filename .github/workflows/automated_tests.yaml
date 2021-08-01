@@ -1,0 +1,33 @@
+name: Automated_tests
+env:
+  ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME  }}
+  ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD  }}
+  GIT_USERNAME: ${{ secrets.GIT_USERNAME  }}
+  GIT_PASSWORD: ${{ secrets.GIT_PASSWORD  }}
+on:
+  push:
+     branches: [ga_demo]
+  pull_request:
+    branches: [master]
+  repository_dispatch:
+     types: [cat-meow]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{runner.os}}-maven-${{hashFiles('**.pom.xml')}}
+          restore-keys: |
+                ${{runner.os}}-maven-
+      - name: setup jdk11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: automate-tests
+        run: |
+          cd $GITHUB_WORKSPACE
+          chmod +x .github/workflows/automate-tests.sh
+          .github/workflows/automate-tests.sh

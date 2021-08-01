@@ -1,0 +1,1 @@
+insert into cats (id,name,date_of_birth) values (nextval('hibernate_sequence'),'Toby',current_date)
